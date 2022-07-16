@@ -1,0 +1,84 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100vw;
+  padding: 0;
+  background-color: var(--light-color);
+  transition: var(--sidebar-hide-anim);
+}
+
+.nav {
+  display: flex;
+  position: sticky;
+  height: auto;
+  border-bottom: 1px solid var(--gray-500-color);
+  border-radius: 0 0 0.5rem 0.5rem;
+  padding-top: 7px;
+}
+
+.btn-hide-side {
+  padding: 7px 10px 5px 10px;
+  color: rgba(var(--dark-rgb), 0.55);
+}
+
+.btn-hide-side:hover {
+  color: var(--purple-color);
+  cursor: pointer;
+}
+
+.navTabsList {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-items: center;
+  overflow-x: scroll;
+  width: 100%;
+}
+
+.navTabsList::-webkit-scrollbar {
+  background: none;
+  height: 0;
+}
+
+.tabsListItem {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  /* padding: 0 10px 0 10px; */
+  margin-right: 5px;
+  width: 100px;
+  height: 100%;
+}
+
+.tabsListItem:hover {
+  border-right: 1px solid var(--purple-color);
+  border-left: 1px solid var(--purple-color);
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+  color: var(--purple-color);
+}
+
+.tabsListItem:hover .tabsClose {
+  display: flex;
+}
+
+.tabsClose {
+  position: absolute;
+  top: 0.5px;
+  right: 3px;
+  width: 15px;
+  height: 15px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.tabsClose:hover {
+  background-color: var(--white-color);
+  border-radius: 50%;
+  cursor: pointer;
+}

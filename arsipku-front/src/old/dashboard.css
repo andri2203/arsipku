@@ -54,3 +54,21 @@
   font-family: "Source Sans Pro", sans-serif;
   margin: 0;
 }
+
+.container {
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.wrapper {
+  position: relative;
+}
+
+.container.show .sidebar {
+  margin-left: 0;
+}
+
+.container.show .content {
+  width: var(--content-width);
+}
