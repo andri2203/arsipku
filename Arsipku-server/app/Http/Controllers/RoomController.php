@@ -29,7 +29,7 @@ class RoomController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'building_id' => ['required', 'numeric', 'exists:buildings,id'],
-            'name' => ['required']
+            'name' => ['required', 'unique:rooms,name']
         ]);
 
         if ($validator->fails()) {
@@ -109,7 +109,7 @@ class RoomController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'building_id' => ['required', 'numeric', 'exists:buildings,id'],
-                'name' => ['required']
+                'name' => ['required', 'unique:rooms,name']
             ]);
 
             if ($validator->fails()) {

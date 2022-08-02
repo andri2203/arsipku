@@ -122,6 +122,7 @@ function SwipeDrawer(props) {
                 {collapsed == group ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
               <Collapse
+                key={i}
                 in={collapsed == group ? true : false}
                 timeout="auto"
                 unmountOnExit
@@ -129,6 +130,7 @@ function SwipeDrawer(props) {
                 <List component="div" disablePadding>
                   {link.map(({ text, toLink }, idx) => (
                     <Link
+                      key={i + "-" + idx}
                       to={toLink}
                       style={{
                         textDecoration: "none",

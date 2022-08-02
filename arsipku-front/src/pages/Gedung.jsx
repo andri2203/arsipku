@@ -181,6 +181,7 @@ export default function Gedung() {
                 ref={reference}
                 label="Gedung"
                 variant="outlined"
+                size="small"
                 helperText={
                   validate
                     ? "Nama Gedung harus di Isi"
