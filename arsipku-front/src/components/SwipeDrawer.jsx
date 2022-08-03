@@ -88,7 +88,7 @@ function SwipeDrawer(props) {
 
   return (
     <Drawer anchor="left" variant="permanent">
-      <Box sx={{ width: 250 }}>
+      <Box sx={{ width: "200px" }}>
         <List
           subheader={
             <ListSubheader component="div" id="nested-list">

@@ -178,6 +178,16 @@ class StorageController extends Controller
     public function destroy($id)
     {
         try {
+            $validator = Validator::make(['id' => $id], [
+                'id' => ['unique:locations,storage_id,sub_storage_id'],
+            ], [
+                'unique' => "The Data is already connected to other data"
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), Response::HTTP_NOT_ACCEPTABLE);
+            }
+            
             $storage = Storage::findOrFail($id);
 
             try {

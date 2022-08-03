@@ -42,15 +42,6 @@ export default function TabTipePenyimpanan(props) {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [validate, setValidate] = useState("");
 
-  const getData = async () => {
-    try {
-      let res = await api.get("/storage-type");
-      setData(res.data.data);
-    } catch (error) {
-      throw error;
-    }
-  };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -96,7 +87,7 @@ export default function TabTipePenyimpanan(props) {
           props.onLoading(false);
           setStorageTypeName("");
           setStorageTypeEnum("");
-          getData();
+          props.getData();
           setSnackbar({
             open: true,
             message: "Berhasil Tambah Data : " + res.data.data.name,
@@ -149,7 +140,7 @@ export default function TabTipePenyimpanan(props) {
           setUpdate(null);
           setStorageTypeName("");
           setStorageTypeEnum("");
-          getData();
+          props.getData();
           setSnackbar({
             open: true,
             message: "Berhasil Ubah Data : " + res.data.data.name,
@@ -182,7 +173,7 @@ export default function TabTipePenyimpanan(props) {
             message: "Berhasil Menghapus Data",
             status: "success",
           });
-          getData();
+          props.getData();
         })
         .catch((err) => {
           props.onLoading(false);
@@ -198,8 +189,8 @@ export default function TabTipePenyimpanan(props) {
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    setData(props.dataTipePenyimpanan);
+  });
 
   return (
     <Card>

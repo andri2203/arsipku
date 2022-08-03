@@ -38,7 +38,7 @@ function App() {
           className="d-flex flex-column position-relative"
           style={{
             backgroundColor: "var(--bs-gray-100)",
-            marginLeft: "250px",
+            marginLeft: "200px",
             width: "100vw",
           }}
         >

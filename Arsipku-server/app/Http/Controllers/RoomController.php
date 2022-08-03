@@ -146,6 +146,16 @@ class RoomController extends Controller
     public function destroy($id)
     {
         try {
+            $validator = Validator::make(['id' => $id], [
+                'id' => ['unique:locations,room_id'],
+            ], [
+                'unique' => "The Data is already connected to other data"
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), Response::HTTP_NOT_ACCEPTABLE);
+            }
+
             $room = Room::findOrFail($id);
 
             try {
