@@ -25,7 +25,7 @@ import { useEffect, useRef, useState, Fragment } from "react";
 import API from "../utils/RestApi";
 import { Add, Edit, Delete, Close } from "@mui/icons-material";
 
-export default function Gedung() {
+export default function Gedung(props) {
   // Initialize Variables
   const reference = useRef(null);
   const [snackbar, setSnackbar] = useState({
@@ -75,10 +75,12 @@ export default function Gedung() {
     }
 
     try {
+      props.onLoading(true);
       if (form.status == "create") {
         api
           .post("/building", { name: gedung })
           .then((res) => {
+            props.onLoading(false);
             setGedung("");
             getData();
             setSnackbar({
@@ -88,6 +90,7 @@ export default function Gedung() {
             });
           })
           .catch((err) => {
+            props.onLoading(false);
             reference.current.childNodes[1].firstChild.focus();
             setSnackbar({
               open: true,
@@ -99,6 +102,7 @@ export default function Gedung() {
         api
           .put("/building/" + form.id, { name: gedung })
           .then((res) => {
+            props.onLoading(false);
             setGedung("");
             setForm({
               status: "create",
@@ -112,6 +116,7 @@ export default function Gedung() {
             });
           })
           .catch((err) => {
+            props.onLoading(false);
             reference.current.childNodes[1].firstChild.focus();
             setSnackbar({
               open: true,
@@ -129,11 +134,12 @@ export default function Gedung() {
   const handleCloseDialog = () => setDialog("");
   const handleDeleteData = (id) => {
     handleCloseDialog();
-
+    props.onLoading(true);
     try {
       api
         .delete(`/building/${id}`)
         .then((value) => {
+          props.onLoading(false);
           setSnackbar({
             open: true,
             message: "Berhasil Menghapus Data",
@@ -142,6 +148,7 @@ export default function Gedung() {
           getData();
         })
         .catch((err) => {
+          props.onLoading(false);
           setSnackbar({
             open: true,
             message: err.response.data.id[0],
@@ -248,9 +255,9 @@ export default function Gedung() {
                 <Table aria-label="Caption Table">
                   <TableHead>
                     <TableRow>
-                      <TableCell>No.</TableCell>
+                      <TableCell width={5}>No.</TableCell>
                       <TableCell>Nama Gedung</TableCell>
-                      <TableCell>Aksi</TableCell>
+                      <TableCell width={15}>Aksi</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

@@ -1,16 +1,5 @@
 import { useState } from "react";
-import {
-  IconButton,
-  Typography,
-  SwipeableDrawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Box,
-  ListSubheader,
-} from "@mui/material";
+import { IconButton, Typography, Box, CircularProgress } from "@mui/material";
 import { Person } from "@mui/icons-material";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
@@ -18,9 +7,32 @@ import pages from "./utils/Pages";
 import SwipeDrawer from "./components/SwipeDrawer";
 
 function App() {
-  const [state, setstate] = useState(false);
+  const [loading, setLoading] = useState(false);
   return (
     <Router>
+      {loading ? (
+        <Box
+          sx={{
+            position: "fixed",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 99999,
+          }}
+        >
+          <CircularProgress sx={{ marginBottom: "1rem" }} />
+          <span className="text-white">Sedang Memproses. Mohon Tunggu...</span>
+        </Box>
+      ) : (
+        <Box></Box>
+      )}
+
       <Box display="flex" flexDirection="row">
         <div
           className="d-flex flex-column position-relative"
@@ -68,7 +80,11 @@ function App() {
                           {text}
                         </span>
                       </div>
-                      <Component />
+                      <Component
+                        onLoading={(loading) => {
+                          setLoading(loading);
+                        }}
+                      />
                     </>
                   }
                 />

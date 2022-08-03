@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, Edit, Delete, Close } from "@mui/icons-material";
 import {
   Card,
   CardContent,
@@ -22,10 +22,10 @@ import {
   DialogTitle,
   DialogActions,
 } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, Fragment } from "react";
 import API from "../utils/RestApi";
 
-export default function Ruangan() {
+export default function Ruangan(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [data, setData] = useState([]);
@@ -34,6 +34,28 @@ export default function Ruangan() {
   const [room, setRoom] = useState("");
   const [building, setBuilding] = useState(0);
   const [validate, setValidate] = useState("");
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    status: "",
+  });
+  const [dialog, setDialog] = useState("");
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbar({ open: false, message: "", status: "" });
+  };
+
+  const handleDialog = (event) => {
+    if (event == "close") {
+      setDialog("");
+    }
+
+    setDialog(event);
+  };
 
   const api = new API();
 
@@ -75,16 +97,27 @@ export default function Ruangan() {
     }
 
     try {
+      props.onLoading(true);
       api
         .post("/room", { building_id: building, name: room })
         .then((res) => {
+          props.onLoading(false);
           setBuilding(0);
           setRoom("");
           getData();
-          console.log("Berhasil Tambah Data : " + res.data.data.name);
+          setSnackbar({
+            open: true,
+            message: "Berhasil Tambah Data : " + res.data.data.name,
+            status: "success",
+          });
         })
         .catch((err) => {
-          console.log(err);
+          props.onLoading(false);
+          setSnackbar({
+            open: true,
+            message: err.response.data.name[0],
+            status: "error",
+          });
         });
     } catch (error) {
       throw error;
@@ -93,9 +126,75 @@ export default function Ruangan() {
 
   const onUpdateEvent = (ev) => {
     ev.preventDefault();
+
+    if (building == 0) {
+      setValidate("building_id");
+    }
+
+    if (room == "") {
+      setValidate("room");
+    }
+
+    if (room == "" && building == 0) {
+      setValidate("all");
+    }
+
+    try {
+      props.onLoading(true);
+      api
+        .put("/room/" + isUpdate, { building_id: building, name: room })
+        .then((res) => {
+          props.onLoading(false);
+          setUpdate(null);
+          setBuilding(0);
+          setRoom("");
+          getData();
+          setSnackbar({
+            open: true,
+            message: "Berhasil Ubah Data : " + res.data.data.name,
+            status: "success",
+          });
+        })
+        .catch((err) => {
+          props.onLoading(false);
+          setSnackbar({
+            open: true,
+            message: err.response.data.name[0],
+            status: "error",
+          });
+        });
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const onDeleteEvent = () => {};
+  const onDeleteEvent = (id) => {
+    handleDialog("close");
+    props.onLoading(true);
+    try {
+      api
+        .delete(`/room/${id}`)
+        .then((value) => {
+          props.onLoading(false);
+          setSnackbar({
+            open: true,
+            message: "Berhasil Menghapus Data",
+            status: "success",
+          });
+          getData();
+        })
+        .catch((err) => {
+          props.onLoading(false);
+          setSnackbar({
+            open: true,
+            message: err.response.data.id[0],
+            status: "error",
+          });
+        });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   useEffect(() => {
     getData();
@@ -189,15 +288,44 @@ export default function Ruangan() {
                 focused={validate == "room" ? true : false}
                 required
               />
-              <Button
-                type="submit"
-                variant="outlined"
-                sx={{ height: "40px", width: "30ch" }}
-                endIcon={<Add />}
-                size="small"
-              >
-                Tambah
-              </Button>
+              {isUpdate == null ? (
+                <Button
+                  type="submit"
+                  variant="outlined"
+                  sx={{ height: "40px", width: "30ch" }}
+                  endIcon={<Add />}
+                  size="small"
+                >
+                  Tambah
+                </Button>
+              ) : (
+                <ButtonGroup>
+                  <Button
+                    type="submit"
+                    variant="outlined"
+                    sx={{ height: "40px", width: "15ch" }}
+                    endIcon={<Add />}
+                    size="small"
+                  >
+                    Ubah
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    sx={{ height: "40px", width: "15ch" }}
+                    endIcon={<Close />}
+                    size="small"
+                    color="error"
+                    onClick={(ev) => {
+                      setUpdate(null);
+                      setBuilding(0);
+                      setRoom("");
+                    }}
+                  >
+                    Batal
+                  </Button>
+                </ButtonGroup>
+              )}
             </Box>
           </div>
           <div className="col-md-12">
@@ -209,17 +337,72 @@ export default function Ruangan() {
                       <TableCell width={5}>No.</TableCell>
                       <TableCell>Nama Gedung</TableCell>
                       <TableCell>Nama Ruangan</TableCell>
-                      <TableCell>Aksi</TableCell>
+                      <TableCell width={15}>Aksi</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {data.map((dt, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{dt.buildingName}</TableCell>
-                        <TableCell>{dt.name}</TableCell>
-                        <TableCell>Aksi</TableCell>
-                      </TableRow>
+                      <Fragment key={"f-" + index}>
+                        <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{dt.buildingName}</TableCell>
+                          <TableCell>{dt.name}</TableCell>
+                          <TableCell>
+                            <ButtonGroup>
+                              <Button
+                                variant="outlined"
+                                color="success"
+                                size="small"
+                                onClick={(ev) => {
+                                  setUpdate(dt.id);
+                                  setBuilding(dt.building_id);
+                                  setRoom(dt.name);
+                                }}
+                              >
+                                <Edit size="small" />
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                color="error"
+                                size="small"
+                                onClick={() => handleDialog("d-" + index)}
+                              >
+                                <Delete size="small" />
+                              </Button>
+                            </ButtonGroup>
+                          </TableCell>
+                        </TableRow>
+                        <Dialog
+                          key={"d-" + index}
+                          open={dialog == "d-" + index ? true : false}
+                          onClose={() => handleDialog("close")}
+                          aria-labelledby={"d-" + index + "-title"}
+                          aria-describedby={"d-" + index + "-description"}
+                        >
+                          <DialogTitle id={"d-" + index + "-title"}>
+                            Yakin ingin di hapus "{dt.name}"?
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText
+                              id={"d-" + index + "-description"}
+                            >
+                              Data "{dt.name}" akan di hapus secara permanen.
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => handleDialog("close")}>
+                              Jangan Hapus
+                            </Button>
+                            <Button
+                              onClick={() => onDeleteEvent(dt.id)}
+                              color="error"
+                              autoFocus
+                            >
+                              Hapus saja
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </Fragment>
                     ))}
                   </TableBody>
                 </Table>
@@ -242,6 +425,20 @@ export default function Ruangan() {
           </div>
         </div>
       </CardContent>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          onClose={handleClose}
+          severity={snackbar.status === "" ? "info" : snackbar.status}
+          sx={{ width: "100%" }}
+        >
+          {" "}
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 }
