@@ -30,7 +30,7 @@ function App() {
           <span className="text-white">Sedang Memproses. Mohon Tunggu...</span>
         </Box>
       ) : (
-        <Box></Box>
+        <div></div>
       )}
 
       <Box display="flex" flexDirection="row">

@@ -48,3 +48,5 @@ Route::delete('/storage/{id}', [StorageController::class, 'destroy']);
 // Route Location
 Route::get('/location', [LocationController::class, 'index']);
 Route::post('/location', [LocationController::class, 'store']);
+Route::put('/location/{id}', [LocationController::class, 'update']);
+Route::delete('/location/{id}', [LocationController::class, 'destroy']);

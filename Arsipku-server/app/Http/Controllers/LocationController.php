@@ -78,17 +78,6 @@ class LocationController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -97,7 +86,49 @@ class LocationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $location = Location::findOrFail($id);
+
+            $validator = Validator::make($request->all(), [
+                'room_id' => ['required', 'exists:rooms,id'],
+                'storage_id' => ['required', 'exists:storages,id'],
+                'sub_storage_id' => [
+                    'nullable',
+                    'exists:storages,id',
+                    'unique:locations,sub_storage_id'
+                ],
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+    
+            try {
+                $location->update($request->all());
+
+                $response = [
+                    'message' => 'Data Berhasil Disimpan',
+                    'data' => $location
+                ];
+    
+                return response()->json($response, Response::HTTP_OK);
+            } catch (QueryException $e) {
+                $response = [
+                    'message' => 'Gagal. ' . $e->errorInfo,
+                    'data' => [],
+                ];
+    
+                return response()->json($response);
+            }
+        } catch (ModelNotFoundException $th) {
+            $response = [
+                'message' => 'Gagal. ' . $th->getMessage(),
+                'data' => [],
+            ];
+
+            return response()->json($response, Response::HTTP_NOT_FOUND);
+        }
     }
 
     /**
