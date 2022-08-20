@@ -21,9 +21,14 @@ class LocationController extends Controller
         $location = Location::join('rooms', 'rooms.id', '=', 'locations.room_id')
             ->join('storages AS m', 'm.id', '=', 'locations.storage_id')
             ->leftJoin('storages AS s', 's.id', '=', 'locations.sub_storage_id')
-            ->orderBy('rooms.name', 'DESC')
+            ->join('buildings', 'buildings.id', '=', 'rooms.building_id')
+            ->orderBy('locations.created_at', 'DESC')
             ->get([
                 'locations.id',
+                'locations.room_id',
+                'locations.storage_id',
+                'locations.sub_storage_id',
+                'buildings.name AS building',
                 'rooms.name AS roomName',
                 'm.name AS primaryStorage',
                 's.name AS secondaryStorage'
@@ -95,7 +100,7 @@ class LocationController extends Controller
                 'sub_storage_id' => [
                     'nullable',
                     'exists:storages,id',
-                    'unique:locations,sub_storage_id'
+                    'unique:locations,sub_storage_id,'.$id
                 ],
             ]);
     
@@ -109,7 +114,8 @@ class LocationController extends Controller
 
                 $response = [
                     'message' => 'Data Berhasil Disimpan',
-                    'data' => $location
+                    'data' => $location,
+                    'input' => $request->sub_storage_id
                 ];
     
                 return response()->json($response, Response::HTTP_OK);
@@ -139,6 +145,32 @@ class LocationController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $location = Location::findOrFail($id);
+
+            try {
+                $location->delete();
+                $response = [
+                    'message' => 'Data Berhasil Dihapus',
+                    'data' => [],
+                ];
+
+                return response()->json($response, Response::HTTP_OK);
+            } catch (QueryException $e) {
+                $response = [
+                    'message' => 'Gagal. ' . $e->errorInfo,
+                    'data' => [],
+                ];
+
+                return response()->json($response);
+            }
+        } catch (ModelNotFoundException $th) {
+            $response = [
+                'message' => 'Gagal. ' . $th->getMessage(),
+                'data' => [],
+            ];
+
+            return response()->json($response, Response::HTTP_NOT_FOUND);
+        }
     }
 }
