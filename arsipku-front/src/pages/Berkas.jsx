@@ -1,5 +1,5 @@
-import React from "react";
+import { Card } from "@mui/material";
 
 export default function Berkas() {
-  return <div>Berkas</div>;
+  return <Card sx={{ padding: "0.5rem" }}>s</Card>;
 }
