@@ -1,5 +1,5 @@
 import { Box, Card, TextField, Button, IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Person, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
@@ -16,47 +16,15 @@ export default function Login(props) {
     const navigate = useNavigate();
     const from = location.state?.from?.pathname || "/";
 
-    async function handleLogin() {
-        const user = await api.post("/login", { email: email, password });
-        setAuth(user.data.data);
-
-        localStorage.setItem("token", user.data.data.token);
-        navigate(from, { replace: true });
-    }
-
-    useEffect(() => {
-        getCsrf();
-        if (!auth?.user) {
-            getUser();
-        }
-    }, []);
-
-    async function getCsrf() {
-        const _csrf = await api.csrf();
-        console.log("csrf : ", _csrf);
-    }
-
-    async function getUser() {
-        api.get("/user")
-            .then((res) => {
-                setAuth({
-                    user: res.data,
-                    token: localStorage.getItem("token"),
-                });
-            })
-            .catch((err) => {
-                if (err?.response) {
-                    console.log("Tidak Ada Data");
-                }
-
-                if (err.response?.status === 401) {
-                    console.log("Sesi telah berakhir atau belum login");
-                }
+    function handleLogin() {
+        api.csrf().then(async function () {
+            api.post("/login", { email: email, password }).then((user) => {
+                setAuth(user.data.data);
+                localStorage.setItem("user", JSON.stringify(user.data.data));
+                localStorage.setItem("token", user.data.data.token);
+                navigate(from, { replace: true });
             });
-    }
-
-    if (auth?.user) {
-        return <Navigate to={from} />;
+        });
     }
 
     return (

@@ -6,6 +6,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\StorageTypeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
-Route::group(['middleware'=> ['auth:sanctum']], function(){
-    Route::get('/user', function(Request $request) {
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -56,4 +57,10 @@ Route::group(['middleware'=> ['auth:sanctum']], function(){
     Route::post('/location', [LocationController::class, 'store']);
     Route::put('/location/{id}', [LocationController::class, 'update']);
     Route::delete('/location/{id}', [LocationController::class, 'destroy']);
+
+    // Route File
+    Route::get('/file', [FileController::class, 'index']);
+    Route::post('/file', [FileController::class, 'store']);
+    Route::put('/file/{id}', [FileController::class, 'update']);
+    Route::delete('/file/{id}', [FileController::class, 'destroy']);
 });

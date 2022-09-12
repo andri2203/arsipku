@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
@@ -13,9 +14,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $field = $request->validate([
-            'name'=>'required|string',
-            'email'=>'required|string|unique:users,email',
-            'password'=>'required|string|confirmed',
+            'name' => 'required|string',
+            'email' => 'required|string|unique:users,email',
+            'password' => 'required|string|confirmed',
         ]);
 
         $user = User::create([
@@ -24,8 +25,10 @@ class AuthController extends Controller
             'name' => bcrypt($field['password']),
         ]);
 
+        $token = $user->createToken("arsipaptoken")->plainTextToken;
+
         return response()->json([
-            'message'=>'register sukses',
+            'message' => 'register sukses',
             'data' => [
                 'user' => $user,
                 'token' => $token,
@@ -36,20 +39,20 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $field = $request->validate([
-            'email'=>'required|string',
-            'password'=>'required|string',
+            'email' => 'required|string',
+            'password' => 'required|string',
         ]);
 
         $user = User::where('email', $field['email'])->get()->first();
 
-        if(!$user || !Hash::check($field['password'], $user->password)){
-            return response()->json(['message'=>'Email atau Password salah'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (!$user || !Hash::check($field['password'], $user->password)) {
+            return response()->json(['message' => 'Email atau Password salah'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $token = $user->createToken("arsipaptoken")->plainTextToken;
 
         return response()->json([
-            'message'=>'login sukses',
+            'message' => 'login sukses',
             'data' => [
                 'user' => $user,
                 'token' => $token,

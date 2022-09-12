@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import pages from "./utils/Pages";
 import Login from "./pages/Login";
 import Middleware from "./components/Middleware";
+import LoginRedirect from "./components/LoginRedirect";
 import { Layout } from "./components/Layout";
 
 function App() {
@@ -73,7 +74,19 @@ function App() {
                         )}
                     </Route>
                 </Route>
-                <Route key="/login" path="login" element={<Login />} />
+                <Route element={<LoginRedirect />}>
+                    <Route
+                        key="/login"
+                        path="/login"
+                        element={
+                            <Login
+                                onLoading={(loading) => {
+                                    setLoading(loading);
+                                }}
+                            />
+                        }
+                    />
+                </Route>
             </Routes>
         </Router>
     );
