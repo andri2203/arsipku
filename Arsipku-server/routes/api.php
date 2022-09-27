@@ -60,7 +60,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     // Route File
     Route::get('/file', [FileController::class, 'index']);
+    Route::get('/file/{id}', [FileController::class, 'show']);
     Route::post('/file', [FileController::class, 'store']);
-    Route::put('/file/{id}', [FileController::class, 'update']);
+    Route::post('/file/{id}', [FileController::class, 'update']);
     Route::delete('/file/{id}', [FileController::class, 'destroy']);
 });

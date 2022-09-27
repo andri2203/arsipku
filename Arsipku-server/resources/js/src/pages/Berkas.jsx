@@ -34,7 +34,7 @@ import {
     Autorenew,
     ArrowForward,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import API from "../utils/RestApi";
 
 export default function Berkas(props) {
@@ -47,6 +47,7 @@ export default function Berkas(props) {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [validate, setValidate] = useState([]);
 
+    const [idBerkas, setIdBerkas] = useState(0);
     const [nomorBerkas, setNomorBerkas] = useState("");
     const [tipeBerkas, setTipeBerkas] = useState("");
     const [kegiatan, setKegiatan] = useState("");
@@ -165,7 +166,6 @@ export default function Berkas(props) {
             formData.append("jenis_berkas", jenisBerkas);
             formData.append("foto", foto);
             formData.append("location_id", lokasiID);
-            console.log(formData);
             props.onLoading(true);
             api.post("/file", formData, {
                 headers: { Content_type: "multipart/form-data" },
@@ -183,10 +183,10 @@ export default function Berkas(props) {
                     setLokasiID(0);
                     setSnackbar({
                         open: true,
-                        message: "Lokasi Penyimpanan Baru Berhasil Ditambahkan",
+                        message: "Berkas Baru Berhasil Ditambahkan",
                         status: "success",
                     });
-                    getDataUsage();
+                    setReadOnly(!readOnly);
                 })
                 .catch((err) => {
                     console.log({ err, mes: "Terjadi Kesalahan" });
@@ -196,223 +196,80 @@ export default function Berkas(props) {
         }
     }
 
-    const FormComponent = () => (
-        <Box
-            display="flex"
-            flexDirection="column"
-            sx={{ paddingTop: "0.5rem" }}
-        >
-            <TextField
-                disabled={readOnly}
-                variant="outlined"
-                label="Nomor Berkas"
-                size="small"
-                sx={{ marginBottom: "1.25rem" }}
-                value={nomorBerkas}
-                helperText={
-                    validate.indexOf("nomorBerkas") > -1
-                        ? "Nomor Berkas Harus Di Pilih"
-                        : "Nomor Berkas"
-                }
-                error={validate.indexOf("nomorBerkas") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == "") {
-                        validateData.push("nomorBerkas");
-                    } else {
-                        if (validate.indexOf("nomorBerkas") > -1) {
-                            validateData.splice(
-                                validate.indexOf("nomorBerkas"),
-                                1
-                            );
-                            setValidate(validateData);
-                        }
-                    }
-                    setNomorBerkas(ev.target.value);
-                }}
-                required
-            />
-            <TextField
-                disabled={readOnly}
-                variant="outlined"
-                label="Tipe Berkas"
-                size="small"
-                sx={{ marginBottom: "1.25rem" }}
-                value={tipeBerkas}
-                helperText={
-                    validate.indexOf("tipeBerkas") > -1
-                        ? "Tipe Berkas Harus Di Pilih"
-                        : "Tipe Berkas"
-                }
-                error={validate.indexOf("tipeBerkas") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == "") {
-                        validateData.push("tipeBerkas");
-                    } else {
-                        if (validate.indexOf("tipeBerkas") > -1) {
-                            validateData.splice(
-                                validate.indexOf("tipeBerkas"),
-                                1
-                            );
-                            setValidate(validateData);
-                        }
-                    }
-                    setTipeBerkas(ev.target.value);
-                }}
-                required
-            />
-            <TextField
-                disabled={readOnly}
-                variant="outlined"
-                label="Kegiatan"
-                size="small"
-                sx={{ marginBottom: "1.25rem" }}
-                value={kegiatan}
-                helperText={
-                    validate.indexOf("kegiatan") > -1
-                        ? "Kegiatan Harus Di Pilih"
-                        : "Kegiatan"
-                }
-                error={validate.indexOf("kegiatan") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == "") {
-                        validateData.push("kegiatan");
-                    } else {
-                        if (validate.indexOf("kegiatan") > -1) {
-                            validateData.splice(
-                                validate.indexOf("kegiatan"),
-                                1
-                            );
-                            setValidate(validateData);
-                        }
-                    }
-                    setKegiatan(ev.target.value);
-                }}
-                required
-            />
-            <TextField
-                disabled={readOnly}
-                variant="outlined"
-                label="PPTK"
-                size="small"
-                sx={{ marginBottom: "1.25rem" }}
-                value={pptk}
-                helperText={
-                    validate.indexOf("pptk") > -1
-                        ? "PPTK Harus Di Pilih"
-                        : "PPTK"
-                }
-                error={validate.indexOf("pptk") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == "") {
-                        validateData.push("pptk");
-                    } else {
-                        if (validate.indexOf("pptk") > -1) {
-                            validateData.splice(validate.indexOf("pptk"), 1);
-                            setValidate(validateData);
-                        }
-                    }
-                    setPptk(ev.target.value);
-                }}
-                required
-            />
-            <TextField
-                disabled={readOnly}
-                variant="outlined"
-                label="Jenis Berkas"
-                size="small"
-                sx={{ marginBottom: "1.25rem" }}
-                value={jenisBerkas}
-                helperText={
-                    validate.indexOf("jenisBerkas") > -1
-                        ? "Jenis Berkas Harus Di Pilih"
-                        : "Jenis Berkas"
-                }
-                error={validate.indexOf("jenisBerkas") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == "") {
-                        validateData.push("jenisBerkas");
-                    } else {
-                        if (validate.indexOf("jenisBerkas") > -1) {
-                            validateData.splice(
-                                validate.indexOf("jenisBerkas"),
-                                1
-                            );
-                            setValidate(validateData);
-                        }
-                    }
-                    setJenisBerkas(ev.target.value);
-                }}
-                required
-            />
-            <TextField
-                disabled={readOnly}
-                select
-                SelectProps={{
-                    native: true,
-                }}
-                label="Lokasi Penyimpanan"
-                size="small"
-                sx={{ marginBottom: "0.75rem" }}
-                value={lokasiID}
-                helperText={
-                    validate.indexOf("lokasiID") > -1
-                        ? "Lokasi Penyimpanan Berkas Harus Di Pilih"
-                        : "Lokasi Penyimpanan Berkas"
-                }
-                error={validate.indexOf("lokasiID") > -1 ? true : false}
-                onChange={(ev) => {
-                    let validateData = validate;
-                    if (ev.target.value == 0) {
-                        validateData.push("lokasiID");
-                    } else {
-                        if (validate.indexOf("lokasiID") > -1) {
-                            validateData.splice(
-                                validate.indexOf("lokasiID"),
-                                1
-                            );
-                            setValidate(validateData);
-                        }
-                    }
-                    setLokasiID(ev.target.value);
-                }}
-                fullWidth
-                required
-            >
-                <option value={0}>Pilih Lokasi Penyimpanan</option>
-                {dataLokasi.map((dt, i) => (
-                    <option key={"lokasi-" + dt.id + "-" + i} value={dt.id}>
-                        {dt.building} {" -> "}
-                        {dt.roomName} {" -> "}
-                        {dt.primaryStorage}
-                        {dt.secondaryStorage == null
-                            ? ""
-                            : "-> " + dt.secondaryStorage}
-                    </option>
-                ))}
-            </TextField>
-            <div>
-                <label htmlFor="formFileSm" className="form-label">
-                    Foto Berkas
-                </label>
-                <input
-                    disabled={readOnly}
-                    accept="image/*"
-                    className="form-control"
-                    id="formFileSm"
-                    type="file"
-                    onChange={(event) => {
-                        setFoto(event.target.files[0]);
-                    }}
-                    required
-                />
-            </div>
-        </Box>
-    );
+    function onUpdate() {
+        if (!readOnly) {
+            if (validate.isValidated) {
+                setValidate(validate.data);
+                return;
+            } else {
+                let formData = new FormData();
+                formData.append("nomor_berkas", nomorBerkas);
+                formData.append("tipe_berkas", tipeBerkas);
+                formData.append("kegiatan", kegiatan);
+                formData.append("pptk", pptk);
+                formData.append("jenis_berkas", jenisBerkas);
+                formData.append("foto", foto);
+                formData.append("location_id", lokasiID);
+                props.onLoading(true);
+                api.post(`/file/${idBerkas}`, formData, {
+                    headers: { Content_type: "multipart/form-data" },
+                })
+                    .then((res) => {
+                        props.onLoading(false);
+                        handleDialog("close");
+                        fetchDataApi();
+                        setUpdate(false);
+                        setIdBerkas(0);
+                        setNomorBerkas("");
+                        setTipeBerkas("");
+                        setKegiatan("");
+                        setPptk("");
+                        setJenisBerkas("");
+                        setFoto({});
+                        setImageUrl("");
+                        setLokasiID(0);
+                        setAuthor("");
+                        setReadOnly(!readOnly);
+                        setSnackbar({
+                            open: true,
+                            message: "Berkas Berhasil Diubah",
+                            status: "success",
+                        });
+                        console.log(res);
+                    })
+                    .catch((err) => {
+                        console.log({ err, mes: "Terjadi Kesalahan" });
+                        props.onLoading(false);
+                        snackBarCatch(err);
+                    });
+            }
+        } else {
+            setSnackbar({
+                open: true,
+                message: "Form Edit Tidak Aktif",
+                status: "error",
+            });
+        }
+    }
+
+    function onDelete(id) {
+        handleDialog("close");
+        props.onLoading(true);
+        api.delete(`/file/${id}`)
+            .then((res) => {
+                props.onLoading(false);
+                fetchDataApi();
+                setSnackbar({
+                    open: true,
+                    message: "Berhasil Menghapus Lokasi",
+                    status: "success",
+                });
+            })
+            .catch((err) => {
+                props.onLoading(false);
+                snackBarCatch(err);
+            });
+    }
 
     return (
         <>
@@ -441,6 +298,7 @@ export default function Berkas(props) {
                                 setUpdate(false);
                                 setImageUrl("");
                                 handleDialog("form-create");
+                                setReadOnly(false);
                             }}
                         >
                             Tambah Berkas
@@ -499,85 +357,167 @@ export default function Berkas(props) {
                                         </TableHead>
                                         <TableBody>
                                             {data.map((dt, i) => (
-                                                <TableRow
-                                                    key={
-                                                        "data-" +
-                                                        dt.id +
-                                                        "-" +
-                                                        i
-                                                    }
+                                                <Fragment
+                                                    key={`f-${i}-${dt.id}`}
                                                 >
-                                                    <TableCell>
-                                                        {i + 1}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {dt.nomor_berkas}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        {dt.building} {" -> "}
-                                                        {dt.roomName} {" -> "}
-                                                        {dt.primaryStorage}
-                                                        {dt.secondaryStorage ==
-                                                        null
-                                                            ? ""
-                                                            : "-> " +
-                                                              dt.secondaryStorage}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <ButtonGroup>
+                                                    <TableRow
+                                                        key={
+                                                            "data-" +
+                                                            dt.id +
+                                                            "-" +
+                                                            i
+                                                        }
+                                                    >
+                                                        <TableCell>
+                                                            {i + 1}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {dt.nomor_berkas}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            {dt.building}{" "}
+                                                            {" -> "}
+                                                            {dt.roomName}{" "}
+                                                            {" -> "}
+                                                            {dt.primaryStorage}
+                                                            {dt.secondaryStorage ==
+                                                            null
+                                                                ? ""
+                                                                : "-> " +
+                                                                  dt.secondaryStorage}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <ButtonGroup>
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    endIcon={
+                                                                        <Delete />
+                                                                    }
+                                                                    color="error"
+                                                                    onClick={() => {
+                                                                        handleDialog(
+                                                                            "d-" +
+                                                                                i
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Hapus
+                                                                </Button>
+                                                                <Button
+                                                                    variant="outlined"
+                                                                    size="small"
+                                                                    color="success"
+                                                                    endIcon={
+                                                                        <ArrowForward />
+                                                                    }
+                                                                    onClick={() => {
+                                                                        setUpdate(
+                                                                            true
+                                                                        );
+                                                                        setIdBerkas(
+                                                                            dt.id
+                                                                        );
+                                                                        setNomorBerkas(
+                                                                            dt.nomor_berkas
+                                                                        );
+                                                                        setTipeBerkas(
+                                                                            dt.tipe_berkas
+                                                                        );
+                                                                        setKegiatan(
+                                                                            dt.kegiatan
+                                                                        );
+                                                                        setPptk(
+                                                                            dt.pptk
+                                                                        );
+                                                                        setJenisBerkas(
+                                                                            dt.jenis_berkas
+                                                                        );
+                                                                        setImageUrl(
+                                                                            dt.foto
+                                                                        );
+                                                                        setLokasiID(
+                                                                            dt.location_id
+                                                                        );
+                                                                        setAuthor(
+                                                                            dt.userName
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Lihat
+                                                                </Button>
+                                                            </ButtonGroup>
+                                                        </TableCell>
+                                                    </TableRow>
+
+                                                    <Dialog
+                                                        key={"d-" + i}
+                                                        open={
+                                                            dialog == "d-" + i
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        onClose={() =>
+                                                            handleDialog(
+                                                                "close"
+                                                            )
+                                                        }
+                                                        aria-labelledby={
+                                                            "d-" + i + "-title"
+                                                        }
+                                                        aria-describedby={
+                                                            "d-" +
+                                                            i +
+                                                            "-description"
+                                                        }
+                                                    >
+                                                        <DialogTitle
+                                                            id={
+                                                                "d-" +
+                                                                i +
+                                                                "-title"
+                                                            }
+                                                        >
+                                                            Yain ingin hapus
+                                                            berkas ini?
+                                                        </DialogTitle>
+                                                        <DialogContent>
+                                                            <DialogContentText
+                                                                id={
+                                                                    "d-" +
+                                                                    i +
+                                                                    "-description"
+                                                                }
+                                                            >
+                                                                Berkas ini akan
+                                                                di hapus secara
+                                                                permanen.
+                                                            </DialogContentText>
+                                                        </DialogContent>
+                                                        <DialogActions>
                                                             <Button
-                                                                variant="outlined"
-                                                                size="small"
-                                                                endIcon={
-                                                                    <Delete />
+                                                                onClick={() =>
+                                                                    handleDialog(
+                                                                        "close"
+                                                                    )
+                                                                }
+                                                            >
+                                                                Jangan Hapus
+                                                            </Button>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    onDelete(
+                                                                        dt.id
+                                                                    )
                                                                 }
                                                                 color="error"
-                                                                onClick={() => {}}
+                                                                autoFocus
                                                             >
-                                                                Ubah
+                                                                Hapus saja
                                                             </Button>
-                                                            <Button
-                                                                variant="outlined"
-                                                                size="small"
-                                                                color="success"
-                                                                endIcon={
-                                                                    <ArrowForward />
-                                                                }
-                                                                onClick={() => {
-                                                                    setUpdate(
-                                                                        true
-                                                                    );
-                                                                    setNomorBerkas(
-                                                                        dt.nomor_berkas
-                                                                    );
-                                                                    setTipeBerkas(
-                                                                        dt.tipe_berkas
-                                                                    );
-                                                                    setKegiatan(
-                                                                        dt.kegiatan
-                                                                    );
-                                                                    setPptk(
-                                                                        dt.pptk
-                                                                    );
-                                                                    setJenisBerkas(
-                                                                        dt.jenis_berkas
-                                                                    );
-                                                                    setImageUrl(
-                                                                        dt.foto
-                                                                    );
-                                                                    setLokasiID(
-                                                                        dt.location_id
-                                                                    );
-                                                                    setAuthor(
-                                                                        dt.userName
-                                                                    );
-                                                                }}
-                                                            >
-                                                                Lihat
-                                                            </Button>
-                                                        </ButtonGroup>
-                                                    </TableCell>
-                                                </TableRow>
+                                                        </DialogActions>
+                                                    </Dialog>
+                                                </Fragment>
                                             ))}
                                         </TableBody>
                                     </Table>
@@ -611,7 +551,7 @@ export default function Berkas(props) {
                                 {!update ? (
                                     <CardContent></CardContent>
                                 ) : (
-                                    <>
+                                    <Box component="form">
                                         <CardHeader
                                             title={nomorBerkas}
                                             subheader={
@@ -643,7 +583,399 @@ export default function Berkas(props) {
                                             alt={imageUrl}
                                         />
                                         <CardContent>
-                                            <FormComponent />
+                                            <Box
+                                                display="flex"
+                                                flexDirection="column"
+                                                sx={{ paddingTop: "0.5rem" }}
+                                            >
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    variant="outlined"
+                                                    label="Nomor Berkas"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "1.25rem",
+                                                    }}
+                                                    value={nomorBerkas}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "nomorBerkas"
+                                                        ) > -1
+                                                            ? "Nomor Berkas Harus Di Pilih"
+                                                            : "Nomor Berkas"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "nomorBerkas"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value ==
+                                                            ""
+                                                        ) {
+                                                            validateData.push(
+                                                                "nomorBerkas"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "nomorBerkas"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "nomorBerkas"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setNomorBerkas(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    required
+                                                />
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    variant="outlined"
+                                                    label="Tipe Berkas"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "1.25rem",
+                                                    }}
+                                                    value={tipeBerkas}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "tipeBerkas"
+                                                        ) > -1
+                                                            ? "Tipe Berkas Harus Di Pilih"
+                                                            : "Tipe Berkas"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "tipeBerkas"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value ==
+                                                            ""
+                                                        ) {
+                                                            validateData.push(
+                                                                "tipeBerkas"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "tipeBerkas"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "tipeBerkas"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setTipeBerkas(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    required
+                                                />
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    variant="outlined"
+                                                    label="Kegiatan"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "1.25rem",
+                                                    }}
+                                                    value={kegiatan}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "kegiatan"
+                                                        ) > -1
+                                                            ? "Kegiatan Harus Di Pilih"
+                                                            : "Kegiatan"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "kegiatan"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value ==
+                                                            ""
+                                                        ) {
+                                                            validateData.push(
+                                                                "kegiatan"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "kegiatan"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "kegiatan"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setKegiatan(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    required
+                                                />
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    variant="outlined"
+                                                    label="PPTK"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "1.25rem",
+                                                    }}
+                                                    value={pptk}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "pptk"
+                                                        ) > -1
+                                                            ? "PPTK Harus Di Pilih"
+                                                            : "PPTK"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "pptk"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value ==
+                                                            ""
+                                                        ) {
+                                                            validateData.push(
+                                                                "pptk"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "pptk"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "pptk"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setPptk(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    required
+                                                />
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    variant="outlined"
+                                                    label="Jenis Berkas"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "1.25rem",
+                                                    }}
+                                                    value={jenisBerkas}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "jenisBerkas"
+                                                        ) > -1
+                                                            ? "Jenis Berkas Harus Di Pilih"
+                                                            : "Jenis Berkas"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "jenisBerkas"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value ==
+                                                            ""
+                                                        ) {
+                                                            validateData.push(
+                                                                "jenisBerkas"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "jenisBerkas"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "jenisBerkas"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setJenisBerkas(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    required
+                                                />
+                                                <TextField
+                                                    disabled={readOnly}
+                                                    select
+                                                    SelectProps={{
+                                                        native: true,
+                                                    }}
+                                                    label="Lokasi Penyimpanan"
+                                                    size="small"
+                                                    sx={{
+                                                        marginBottom: "0.75rem",
+                                                    }}
+                                                    value={lokasiID}
+                                                    helperText={
+                                                        validate.indexOf(
+                                                            "lokasiID"
+                                                        ) > -1
+                                                            ? "Lokasi Penyimpanan Berkas Harus Di Pilih"
+                                                            : "Lokasi Penyimpanan Berkas"
+                                                    }
+                                                    error={
+                                                        validate.indexOf(
+                                                            "lokasiID"
+                                                        ) > -1
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    onChange={(ev) => {
+                                                        let validateData =
+                                                            validate;
+                                                        if (
+                                                            ev.target.value == 0
+                                                        ) {
+                                                            validateData.push(
+                                                                "lokasiID"
+                                                            );
+                                                        } else {
+                                                            if (
+                                                                validate.indexOf(
+                                                                    "lokasiID"
+                                                                ) > -1
+                                                            ) {
+                                                                validateData.splice(
+                                                                    validate.indexOf(
+                                                                        "lokasiID"
+                                                                    ),
+                                                                    1
+                                                                );
+                                                                setValidate(
+                                                                    validateData
+                                                                );
+                                                            }
+                                                        }
+                                                        setLokasiID(
+                                                            ev.target.value
+                                                        );
+                                                    }}
+                                                    fullWidth
+                                                    required
+                                                >
+                                                    <option value={0}>
+                                                        Pilih Lokasi Penyimpanan
+                                                    </option>
+                                                    {dataLokasi.map((dt, i) => (
+                                                        <option
+                                                            key={
+                                                                "lokasi-" +
+                                                                dt.id +
+                                                                "-" +
+                                                                i
+                                                            }
+                                                            value={dt.id}
+                                                        >
+                                                            {dt.building}{" "}
+                                                            {" -> "}
+                                                            {dt.roomName}{" "}
+                                                            {" -> "}
+                                                            {dt.primaryStorage}
+                                                            {dt.secondaryStorage ==
+                                                            null
+                                                                ? ""
+                                                                : "-> " +
+                                                                  dt.secondaryStorage}
+                                                        </option>
+                                                    ))}
+                                                </TextField>
+                                                <div>
+                                                    <label
+                                                        htmlFor="formFileSm"
+                                                        className="form-label"
+                                                    >
+                                                        Foto Berkas
+                                                    </label>
+                                                    <input
+                                                        disabled={readOnly}
+                                                        accept="image/*"
+                                                        className="form-control"
+                                                        id="formFileSm"
+                                                        type="file"
+                                                        onChange={(event) => {
+                                                            setFoto(
+                                                                event.target
+                                                                    .files[0]
+                                                            );
+                                                        }}
+                                                        required
+                                                    />
+                                                </div>
+                                            </Box>
                                         </CardContent>
                                         <CardActions>
                                             <Button
@@ -653,6 +985,7 @@ export default function Berkas(props) {
                                                 endIcon={<Close />}
                                                 onClick={() => {
                                                     setUpdate(false);
+                                                    setIdBerkas(0);
                                                     setNomorBerkas("");
                                                     setTipeBerkas("");
                                                     setKegiatan("");
@@ -662,6 +995,7 @@ export default function Berkas(props) {
                                                     setImageUrl("");
                                                     setLokasiID(0);
                                                     setAuthor("");
+                                                    setReadOnly(!readOnly);
                                                 }}
                                             >
                                                 Tutup
@@ -670,23 +1004,12 @@ export default function Berkas(props) {
                                                 variant="outlined"
                                                 size="small"
                                                 endIcon={<Edit />}
-                                                onClick={() => {
-                                                    if (!readOnly) {
-                                                        // Logika Update
-                                                    } else {
-                                                        setSnackbar({
-                                                            open: true,
-                                                            message:
-                                                                "Form Edit Tidak Aktif.",
-                                                            status: "error",
-                                                        });
-                                                    }
-                                                }}
+                                                onClick={onUpdate}
                                             >
                                                 Ubah
                                             </Button>
                                         </CardActions>
-                                    </>
+                                    </Box>
                                 )}
                             </Card>
                         )}
@@ -696,12 +1019,268 @@ export default function Berkas(props) {
             <Dialog
                 fullWidth={true}
                 open={dialog == "form-create" ? true : false}
-                onClose={() => handleDialog("close")}
+                onClose={() => {
+                    setReadOnly(!readOnly);
+                    handleDialog("close");
+                }}
             >
                 <Box component="form">
                     <DialogTitle>Tambah Berkas</DialogTitle>
                     <DialogContent>
-                        <FormComponent />
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            sx={{ paddingTop: "0.5rem" }}
+                        >
+                            <TextField
+                                disabled={readOnly}
+                                variant="outlined"
+                                label="Nomor Berkas"
+                                size="small"
+                                sx={{ marginBottom: "1.25rem" }}
+                                value={nomorBerkas}
+                                helperText={
+                                    validate.indexOf("nomorBerkas") > -1
+                                        ? "Nomor Berkas Harus Di Pilih"
+                                        : "Nomor Berkas"
+                                }
+                                error={
+                                    validate.indexOf("nomorBerkas") > -1
+                                        ? true
+                                        : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == "") {
+                                        validateData.push("nomorBerkas");
+                                    } else {
+                                        if (
+                                            validate.indexOf("nomorBerkas") > -1
+                                        ) {
+                                            validateData.splice(
+                                                validate.indexOf("nomorBerkas"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setNomorBerkas(ev.target.value);
+                                }}
+                                required
+                            />
+                            <TextField
+                                disabled={readOnly}
+                                variant="outlined"
+                                label="Tipe Berkas"
+                                size="small"
+                                sx={{ marginBottom: "1.25rem" }}
+                                value={tipeBerkas}
+                                helperText={
+                                    validate.indexOf("tipeBerkas") > -1
+                                        ? "Tipe Berkas Harus Di Pilih"
+                                        : "Tipe Berkas"
+                                }
+                                error={
+                                    validate.indexOf("tipeBerkas") > -1
+                                        ? true
+                                        : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == "") {
+                                        validateData.push("tipeBerkas");
+                                    } else {
+                                        if (
+                                            validate.indexOf("tipeBerkas") > -1
+                                        ) {
+                                            validateData.splice(
+                                                validate.indexOf("tipeBerkas"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setTipeBerkas(ev.target.value);
+                                }}
+                                required
+                            />
+                            <TextField
+                                disabled={readOnly}
+                                variant="outlined"
+                                label="Kegiatan"
+                                size="small"
+                                sx={{ marginBottom: "1.25rem" }}
+                                value={kegiatan}
+                                helperText={
+                                    validate.indexOf("kegiatan") > -1
+                                        ? "Kegiatan Harus Di Pilih"
+                                        : "Kegiatan"
+                                }
+                                error={
+                                    validate.indexOf("kegiatan") > -1
+                                        ? true
+                                        : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == "") {
+                                        validateData.push("kegiatan");
+                                    } else {
+                                        if (validate.indexOf("kegiatan") > -1) {
+                                            validateData.splice(
+                                                validate.indexOf("kegiatan"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setKegiatan(ev.target.value);
+                                }}
+                                required
+                            />
+                            <TextField
+                                disabled={readOnly}
+                                variant="outlined"
+                                label="PPTK"
+                                size="small"
+                                sx={{ marginBottom: "1.25rem" }}
+                                value={pptk}
+                                helperText={
+                                    validate.indexOf("pptk") > -1
+                                        ? "PPTK Harus Di Pilih"
+                                        : "PPTK"
+                                }
+                                error={
+                                    validate.indexOf("pptk") > -1 ? true : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == "") {
+                                        validateData.push("pptk");
+                                    } else {
+                                        if (validate.indexOf("pptk") > -1) {
+                                            validateData.splice(
+                                                validate.indexOf("pptk"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setPptk(ev.target.value);
+                                }}
+                                required
+                            />
+                            <TextField
+                                disabled={readOnly}
+                                variant="outlined"
+                                label="Jenis Berkas"
+                                size="small"
+                                sx={{ marginBottom: "1.25rem" }}
+                                value={jenisBerkas}
+                                helperText={
+                                    validate.indexOf("jenisBerkas") > -1
+                                        ? "Jenis Berkas Harus Di Pilih"
+                                        : "Jenis Berkas"
+                                }
+                                error={
+                                    validate.indexOf("jenisBerkas") > -1
+                                        ? true
+                                        : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == "") {
+                                        validateData.push("jenisBerkas");
+                                    } else {
+                                        if (
+                                            validate.indexOf("jenisBerkas") > -1
+                                        ) {
+                                            validateData.splice(
+                                                validate.indexOf("jenisBerkas"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setJenisBerkas(ev.target.value);
+                                }}
+                                required
+                            />
+                            <TextField
+                                disabled={readOnly}
+                                select
+                                SelectProps={{
+                                    native: true,
+                                }}
+                                label="Lokasi Penyimpanan"
+                                size="small"
+                                sx={{ marginBottom: "0.75rem" }}
+                                value={lokasiID}
+                                helperText={
+                                    validate.indexOf("lokasiID") > -1
+                                        ? "Lokasi Penyimpanan Berkas Harus Di Pilih"
+                                        : "Lokasi Penyimpanan Berkas"
+                                }
+                                error={
+                                    validate.indexOf("lokasiID") > -1
+                                        ? true
+                                        : false
+                                }
+                                onChange={(ev) => {
+                                    let validateData = validate;
+                                    if (ev.target.value == 0) {
+                                        validateData.push("lokasiID");
+                                    } else {
+                                        if (validate.indexOf("lokasiID") > -1) {
+                                            validateData.splice(
+                                                validate.indexOf("lokasiID"),
+                                                1
+                                            );
+                                            setValidate(validateData);
+                                        }
+                                    }
+                                    setLokasiID(ev.target.value);
+                                }}
+                                fullWidth
+                                required
+                            >
+                                <option value={0}>
+                                    Pilih Lokasi Penyimpanan
+                                </option>
+                                {dataLokasi.map((dt, i) => (
+                                    <option
+                                        key={"lokasi-" + dt.id + "-" + i}
+                                        value={dt.id}
+                                    >
+                                        {dt.building} {" -> "}
+                                        {dt.roomName} {" -> "}
+                                        {dt.primaryStorage}
+                                        {dt.secondaryStorage == null
+                                            ? ""
+                                            : "-> " + dt.secondaryStorage}
+                                    </option>
+                                ))}
+                            </TextField>
+                            <div>
+                                <label
+                                    htmlFor="formFileSm"
+                                    className="form-label"
+                                >
+                                    Foto Berkas
+                                </label>
+                                <input
+                                    disabled={readOnly}
+                                    accept="image/*"
+                                    className="form-control"
+                                    id="formFileSm"
+                                    type="file"
+                                    onChange={(event) => {
+                                        setFoto(event.target.files[0]);
+                                    }}
+                                    required
+                                />
+                            </div>
+                        </Box>
                     </DialogContent>
                     <DialogActions>
                         <Button
@@ -709,7 +1288,10 @@ export default function Berkas(props) {
                             size="small"
                             color="error"
                             endIcon={<Close />}
-                            onClick={() => handleDialog("close")}
+                            onClick={() => {
+                                setReadOnly(true);
+                                handleDialog("close");
+                            }}
                         >
                             Batal
                         </Button>
@@ -719,7 +1301,7 @@ export default function Berkas(props) {
                             endIcon={<Add />}
                             onClick={onSubmit}
                         >
-                            {update != null ? "Ubah" : "Tambah"}
+                            Tambah
                         </Button>
                     </DialogActions>
                 </Box>
